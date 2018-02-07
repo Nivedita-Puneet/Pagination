@@ -69,8 +69,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsAdapterVie
     @Override
     public void onBindViewHolder(NewsAdapter.NewsAdapterViewHolder holder, int position) {
         holder.title.setText(categories.get(position).getTitle());
-        holder.description.setText(categories.get(position).getDescription());
-        Picasso.with(this.context).load(categories.get(position).getImageHref()).into(holder.thumbnail);
+        String desc = categories.get(position).getDescription() == null ? context.getString(R.string.no_desc) : categories.get(position).getDescription();
+        holder.description.setText(desc);
+        Picasso.with(this.context).load(categories.get(position).getImageHref())
+                .placeholder(R.drawable.no_image)
+                .into(holder.thumbnail);
     }
 
     @Override

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MyDailyNews</string>
+    <string name="no_desc">No Description Available</string>
 </resources>
