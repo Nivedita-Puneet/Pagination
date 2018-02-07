@@ -20,6 +20,7 @@ import org.nivi.mydailynews.model.News;
 import org.nivi.mydailynews.restapi.NewsAPI;
 import org.nivi.mydailynews.restapi.NewsAPIClient;
 import org.nivi.mydailynews.util.DividerItemDecoration;
+import org.nivi.mydailynews.util.InfiniteScrollViewListener;
 import org.nivi.mydailynews.util.VerticalSpaceItemDecoration;
 
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 /**
  * Created by NEETU on 08-02-2018.
  */
@@ -37,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private String actionBarTitle;
     private NewsAPI apiService;
+    private NewsAPI loadMoreService;
     private static final int VERTICAL_ITEM_SPACE = 7;
+    private LinearLayoutManager linearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,24 +50,37 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initializeControls();
 
+        /*Creating one more instance of NewsAPi in order to handle and demonstrate Refresh functionality.*/
+        loadMoreService = NewsAPIClient.getClient().create(NewsAPI.class);
         apiService =
                 NewsAPIClient.getClient().create(NewsAPI.class);
 
         if (!checkNetworkConnectivity()) {
 
-            Toast.makeText(MainActivity.this, "Review your network settings", Toast.LENGTH_LONG).show();
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(MainActivity.this, getString(R.string.review_network_settings), Toast.LENGTH_LONG).show();
         } else {
             getNews(apiService);
+            recyclerView.addOnScrollListener(new InfiniteScrollViewListener() {
+                @Override
+                public void onLoadMore() {
+
+                    progressBar.setVisibility(View.VISIBLE);
+                    getNews(loadMoreService);
+                }
+            });
         }
 
 
     }
 
+    /*Method to invoke the news and bind it to UI. Used Retrofit client and GSON libraries to perform the same.*/
     private void getNews(NewsAPI apiService) {
         Call<News> call = apiService.getUpdatedNews();
         call.enqueue(new Callback<News>() {
             @Override
             public void onResponse(Call<News> call, Response<News> response) {
+
                 News news = response.body();
                 actionBarTitle = news.getTitle();
                 getSupportActionBar().setTitle(actionBarTitle);
@@ -79,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
     public void onResume() {
         super.onResume();
         if (checkNetworkConnectivity()) {
@@ -87,13 +105,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    // Initialize all the controls in order to invoke the activity.
     private void initializeControls() {
 
         recyclerView = (RecyclerView) findViewById(R.id.news_recyclerview);
         progressBar = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         progressBar.setVisibility(View.VISIBLE);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
 

@@ -73,6 +73,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsAdapterVie
         holder.description.setText(desc);
         Picasso.with(this.context).load(categories.get(position).getImageHref())
                 .placeholder(R.drawable.no_image)
+                .resize(50,75)
                 .into(holder.thumbnail);
     }
 
