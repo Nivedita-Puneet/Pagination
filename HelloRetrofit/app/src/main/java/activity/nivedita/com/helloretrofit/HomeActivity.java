@@ -2,7 +2,12 @@ package activity.nivedita.com.helloretrofit;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 
 import java.util.List;
@@ -20,7 +25,6 @@ import rx.Observer;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 
@@ -33,14 +37,40 @@ public class HomeActivity extends AppCompatActivity {
     private Subscription subscription = null;
     private Retrofit retrofit;
 
+    /*Initialize views*/
+    RecyclerView recyclerView;
+    ProgressBar progressBar;
+    MovieAdapter adapter;
+    LinearLayoutManager linearLayoutManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
         retrofit = MovieApi.getClient(this);
         movieService = retrofit.create(MovieService.class);
         getResultsList();
+
+        initializeControls();
+    }
+
+    private void initializeControls() {
+
+        recyclerView = (RecyclerView) findViewById(R.id.main_recycler);
+        progressBar = (ProgressBar) findViewById(R.id.main_progress);
+
+        adapter = new MovieAdapter(this);
+
+        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        recyclerView.setAdapter(adapter);
+
+
     }
 
     /*Retrofit with react native call to get results and top rated movies*/
@@ -70,6 +100,8 @@ public class HomeActivity extends AppCompatActivity {
 
                         //TODO: set the results to the adapter.
                         List<Result> results = response.getResults();
+                        progressBar.setVisibility(View.GONE);
+                        adapter.addAll(results);
                     }
                 });
 
@@ -79,6 +111,11 @@ public class HomeActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         //subscription.unsubscribe();
+    }
+
+    //TODO: subscribe to get the results of next page.
+    private void loadNextPage() {
+
     }
 
 }
