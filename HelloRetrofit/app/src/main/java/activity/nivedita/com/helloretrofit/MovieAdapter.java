@@ -24,7 +24,7 @@ import activity.nivedita.com.model.Result;
 import activity.nivedita.com.networkutils.ConstantsUtil;
 
 /**
- * Created by PUNEETU on 22-02-2018.
+ * Created by NEETU on 22-02-2018.
  */
 
 public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -109,16 +109,14 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         .listener(new RequestListener<String, GlideDrawable>() {
                             @Override
                             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                                // TODO: 08/11/16 handle failure
                                 movieVH.mProgress.setVisibility(View.GONE);
                                 return false;
                             }
 
                             @Override
                             public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                                // image ready, hide progress now
                                 movieVH.mProgress.setVisibility(View.GONE);
-                                return false;   // return false if you want Glide to handle everything else.
+                                return false;
                             }
                         })
                         .diskCacheStrategy(DiskCacheStrategy.ALL)   // cache both original & resized image
@@ -133,6 +131,13 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 break;
         }
 
+    }
+
+    public int getLastVisibleItemId() {
+        if (movieResults.isEmpty()) {
+            return 0;
+        }
+        return movieResults.get(movieResults.size() - 1).getId();
     }
 
     @Override

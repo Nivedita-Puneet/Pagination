@@ -14,5 +14,8 @@ public class ConstantsUtil {
 
     public static final String BASE_URL_IMG = "http://image.tmdb.org/t/p/w185/";
 
+    public static final int  TOTAL_PAGES = 5;
+
+
 
 }

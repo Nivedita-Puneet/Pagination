@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 
+import org.reactivestreams.Publisher;
+
 import java.util.List;
 
 import activity.nivedita.com.model.Result;
@@ -19,23 +21,20 @@ import activity.nivedita.com.networkutils.MovieApi;
 import activity.nivedita.com.networkutils.MovieService;
 
 
-import retrofit2.Retrofit;
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.processors.PublishProcessor;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class HomeActivity extends AppCompatActivity {
 
     private MovieService movieService;
-    private static final int PAGE_START = 1;
-    private int TOTAL_PAGES = 5;
-    private int currentPage = PAGE_START;
-    private Subscription subscription = null;
-    private Retrofit retrofit;
 
     /*Initialize views*/
     RecyclerView recyclerView;
@@ -43,15 +42,18 @@ public class HomeActivity extends AppCompatActivity {
     MovieAdapter adapter;
     LinearLayoutManager linearLayoutManager;
 
+    /*Classes used to add pagination */
+    private PublishProcessor<Integer> pagination;
+    private CompositeDisposable compositeDisposable;
+    private boolean requestOnWay = false;
+
+    private static String TAG = HomeActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-        retrofit = MovieApi.getClient(this);
-        movieService = retrofit.create(MovieService.class);
-        getResultsList();
 
         initializeControls();
     }
@@ -62,6 +64,9 @@ public class HomeActivity extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.main_progress);
 
         adapter = new MovieAdapter(this);
+        pagination = PublishProcessor.create();
+        compositeDisposable = new CompositeDisposable();
+        movieService = MovieApi.createMovieService();
 
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -70,52 +75,54 @@ public class HomeActivity extends AppCompatActivity {
 
         recyclerView.setAdapter(adapter);
 
+        recyclerView.addOnScrollListener(new MoviePagination(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int currentPage, int totalItemCount, View view) {
 
+                if (!requestOnWay) {
+                    pagination.onNext(adapter.getLastVisibleItemId());
+                }
+            }
+        });
+
+        compositeDisposable.add(getMovieResults());
+        pagination.onNext(0);
     }
 
-    /*Retrofit with react native call to get results and top rated movies*/
+    private Disposable getMovieResults() {
 
-    //TODO: Follow appropriate coding guide line to decouple the network logic from Main activity
-    /*Add a presenter/ViewModel layer*/
-
-    public Subscription getResultsList() {
-
-        Observable<TopRatedMovies> resultObservable = movieService.getTopRatedMovies(ConstantsUtil.TMDB_API_KEY, "en_US", currentPage);
-        return resultObservable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<TopRatedMovies>() {
+        Disposable disposable = pagination.onBackpressureDrop().concatMap(new Function<Integer, Publisher<TopRatedMovies>>() {
+            @Override
+            public Publisher<TopRatedMovies> apply(@NonNull Integer page) throws Exception {
+                return getListOfTopRatedMovies();
+            }
+        }).observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(new Consumer<TopRatedMovies>() {
                     @Override
-                    public void onCompleted() {
-
+                    public void accept(TopRatedMovies topRatedMoviesResponse) throws Exception {
+                        List<Result> movies = topRatedMoviesResponse.getResults();
+                        adapter.addAll(movies);
+                        progressBar.setVisibility(View.INVISIBLE);
+                        requestOnWay = false;
                     }
+                }).subscribe();
 
-                    @Override
-                    public void onError(Throwable e) {
-
-                        Log.e(HomeActivity.class.getSimpleName(), e.getLocalizedMessage());
-                    }
-
-                    @Override
-                    public void onNext(TopRatedMovies response) {
-
-                        //TODO: set the results to the adapter.
-                        List<Result> results = response.getResults();
-                        progressBar.setVisibility(View.GONE);
-                        adapter.addAll(results);
-                    }
-                });
-
+        return disposable;
     }
 
     @Override
     public void onDestroy() {
+
         super.onDestroy();
-        //subscription.unsubscribe();
+        compositeDisposable.dispose();
     }
 
-    //TODO: subscribe to get the results of next page.
-    private void loadNextPage() {
+    private Flowable<TopRatedMovies> getListOfTopRatedMovies() {
 
+        return movieService.getTopRatedMovies(ConstantsUtil.TMDB_API_KEY,
+                "en_US",
+                ConstantsUtil.TOTAL_PAGES)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
-
 }
