@@ -89,6 +89,10 @@ public class HomeActivity extends AppCompatActivity {
         pagination.onNext(0);
     }
 
+    //TODO: add all the composite disposables into the data layer and define a clean mvp architecture.
+    /*TODO: 1. define a data model and add all the network related operations into that package.
+    * TODO: 2. Define a base view contract and Base presenter and define a main presenter.
+    *TODO:  3. Create a clean dependency injection pattern.*/
     private Disposable getMovieResults() {
 
         Disposable disposable = pagination.onBackpressureDrop().concatMap(new Function<Integer, Publisher<TopRatedMovies>>() {
