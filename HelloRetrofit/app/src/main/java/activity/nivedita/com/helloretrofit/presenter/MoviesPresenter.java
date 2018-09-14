@@ -12,11 +12,14 @@ import javax.inject.Inject;
 
 import activity.nivedita.com.data.DataManager;
 
+import activity.nivedita.com.helloretrofit.MovieView;
 import activity.nivedita.com.helloretrofit.view.MainMVPView;
 import activity.nivedita.com.model.Pager;
 import activity.nivedita.com.model.Result;
 import activity.nivedita.com.model.TopRatedMovies;
 import activity.nivedita.com.networkutils.LogNetworkError;
+import activity.nivedita.com.networkutils.paginate.Paginateutil;
+import activity.nivedita.com.networkutils.rx.SchedulerProvider;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -31,138 +34,66 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 /**
- * Created by NEETU on 05-03-2018.
+ * Movies presenter class to be used by main activity class.
  */
 
-public class MoviesPresenter extends BasePresenter<MainMVPView> {
+public class MoviesPresenter<V extends MovieView> extends BasePresenter<V>
+        implements MoviesBasePresenter<V> {
 
-    private final DataManager mDataManager;
-    private CompositeDisposable compositeDisposable;
-    private boolean isRequestOnWay;
-
-    private PublishProcessor<Integer> pagination;
+    private static final String TAG = MoviesPresenter.class.getSimpleName();
+    public static Paginateutil paginateutil;
+    private int currentPage;
+    private boolean loading;
 
     @Inject
-    public MoviesPresenter(DataManager mDataManager, boolean isRequestOnWay, PublishProcessor<Integer> pagination) {
-        this.mDataManager = mDataManager;
-        this.isRequestOnWay = isRequestOnWay;
-        this.pagination = pagination;
+    public MoviesPresenter(DataManager mDataManager,
+                           SchedulerProvider schedulerProvider,
+                           CompositeDisposable compositeDisposable,
+                           PublishProcessor<Integer> publishProcessor) {
+
+        super(mDataManager, schedulerProvider, compositeDisposable, publishProcessor);
 
     }
+
+
+    private Disposable getPopularMovies() {
+
+
+        getMvpView().showWait();
+        return getPublishProcessor().onBackpressureDrop()
+                .doOnNext(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        getMvpView().showWait();
+                    }
+                }).concatMap(new Function<Integer, Publisher<TopRatedMovies>>() {
+                    @Override
+                    public Publisher<TopRatedMovies> apply(Integer integer) throws Exception {
+                        return getDataManager().getTopRatedMovies()
+                                .subscribeOn(getSchedulerProvider().io()).observeOn(getSchedulerProvider().ui());
+                    }
+                }).subscribe(new Consumer<TopRatedMovies>() {
+                    @Override
+                    public void accept(TopRatedMovies topRatedMovies) throws Exception {
+                        getMvpView().removeWait();
+                        getMvpView().getMoviesListSuccess(topRatedMovies);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                        getMvpView().showError(new LogNetworkError(throwable));
+                    }
+                });
+    }
+
 
     @Override
-    public void attachView(MainMVPView mvpView) {
-        super.attachView(mvpView);
-        // Initializes variables
-        if (compositeDisposable == null) {
-            compositeDisposable = new CompositeDisposable();
-        }
+    public void onViewInitialized() {
 
-        //compositeDisposable.add(getDisposable(returnPublishProcessorInstance()));
-        compositeDisposable.add(getDisposable());
-        // PublishSubject using switchMap to invoke services to the API.
+        getCompositeDisposable().add(getPopularMovies());
+        setCurrentPage(getCurrentPage());
+        getPublishProcessor().onNext(getCurrentPage());
     }
 
-    /* private Disposable getMovies() {
-
-         return sendRequestToApiObservable().subscribe(new Consumer<TopRatedMovies>() {
-             @Override
-             public void accept(TopRatedMovies topRatedMovies) throws Exception {
-
-                 List<Result> results = topRatedMovies.getResults();
-                 if (!results.isEmpty()) {
-                     getMvpView().showMovies(results);
-                 } else {
-
-                     getMvpView().showMoviesEmpty();
-                 }
-             }
-
-
-         }, new Consumer<Throwable>() {
-             @Override
-             public void accept(Throwable throwable) throws Exception {
-
-                 getMvpView().showError(new LogNetworkError(throwable));
-             }
-         });
-     }*/
-    private Disposable getDisposable() {
-
-        Disposable disposable = null;
-        disposable = pagination.onBackpressureDrop().doOnNext(new Consumer<Integer>() {
-            @Override
-            public void accept(Integer integer) throws Exception {
-                isRequestOnWay = true;
-                getMvpView().showWait();
-            }
-        }).concatMap(new Function<Integer, Publisher<TopRatedMovies>>() {
-            @Override
-            public Publisher<TopRatedMovies> apply(Integer integer) throws Exception {
-
-                return sendRequestToApiObservable();
-            }
-        }).doOnNext(new Consumer<TopRatedMovies>() {
-            @Override
-            public void accept(TopRatedMovies topRatedMoviesResponse) throws Exception {
-                List<Result> movies = topRatedMoviesResponse.getResults();
-
-                if (movies.isEmpty()) {
-                    getMvpView().showMoviesEmpty();
-                } else {
-
-                    getMvpView().showMovies(movies);
-                }
-
-                isRequestOnWay = false;
-                getMvpView().removeWait();
-            }
-        }).doOnError(new Consumer<Throwable>() {
-
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                getMvpView().showError(new LogNetworkError(throwable));
-            }
-        }).onErrorResumeNext(new Function<Throwable, Publisher<? extends TopRatedMovies>>() {
-            @Override
-            public Flowable<? extends TopRatedMovies> apply(Throwable throwable) throws Exception {
-
-                return Flowable.error(new LogNetworkError(throwable));
-
-            }
-        }).subscribe();
-
-        return disposable;
-
-    }
-
-    private Flowable<TopRatedMovies> sendRequestToApiObservable() {
-        return mDataManager.getListOfTopRatedMovies().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-    }
-
-    @Override
-    public void detachView() {
-        super.detachView();
-        if (compositeDisposable != null) {
-            compositeDisposable.clear();
-        }
-    }
-
-    public void loadMovies() {
-        checkViewAttached();
-        pagination.onNext(0);
-
-    }
-
-    public PublishProcessor<Integer> getPagination() {
-        return pagination;
-    }
-
-    public void setPagination(PublishProcessor<Integer> pagination) {
-        this.pagination = pagination;
-    }
-
-    public boolean proceedPagination() {
-        return isRequestOnWay;
-    }
 }

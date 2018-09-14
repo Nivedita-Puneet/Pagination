@@ -7,6 +7,7 @@ import org.reactivestreams.Publisher;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import activity.nivedita.com.data.network.APIHelper;
 import activity.nivedita.com.model.TopRatedMovies;
 import activity.nivedita.com.networkutils.ConstantsUtil;
 import activity.nivedita.com.networkutils.LogNetworkError;
@@ -23,21 +24,8 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 @Singleton
-public class DataManager {
+public interface DataManager extends APIHelper {
 
-    private final MovieService movieService;
-    public static final String TAG = DataManager.class.getSimpleName();
+    public void onPageLoad();
 
-    @Inject
-    public DataManager(MovieService movieService) {
-        this.movieService = movieService;
-    }
-
-
-    public Flowable<TopRatedMovies> getListOfTopRatedMovies() {
-
-        return movieService.getTopRatedMovies(ConstantsUtil.TMDB_API_KEY,
-                "en_US",
-                ConstantsUtil.TOTAL_PAGES);
-    }
 }

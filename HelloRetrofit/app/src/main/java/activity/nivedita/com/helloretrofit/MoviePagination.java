@@ -2,14 +2,22 @@ package activity.nivedita.com.helloretrofit;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+
+import javax.inject.Inject;
+
+import activity.nivedita.com.helloretrofit.presenter.MoviesPresenter;
+import activity.nivedita.com.networkutils.paginate.Paginateutil;
 
 /**
  * Created by PUNEETU on 24-02-2018.
  */
 
-abstract public class MoviePagination extends RecyclerView.OnScrollListener {
+ public class MoviePagination extends RecyclerView.OnScrollListener {
 
+     @Inject
+    Paginateutil paginateutil;
     /*Handle on scroll items to load more items into recyclerview*/
     private LinearLayoutManager linearLayoutManager;
 
@@ -33,23 +41,7 @@ abstract public class MoviePagination extends RecyclerView.OnScrollListener {
         int lastVisibleItemPosition = linearLayoutManager.findLastVisibleItemPosition();
         int totalItemCount = linearLayoutManager.getItemCount();
 
-        if (totalItemCount < previousTotalItemCount) {
-
-            MoviePagination.this.currentPage = this.startingPageIndex;
-            this.previousTotalItemCount = totalItemCount;
-            if (totalItemCount == 0) {
-                this.loading = true;
-            }
-        }
-
-        if (loading && (lastVisibleItemPosition + visibleThreshold) > totalItemCount) {
-
-            currentPage++;
-            onLoadMore(currentPage, totalItemCount, recyclerView);
-            loading = true;
-        }
     }
 
-    abstract public void onLoadMore(int currentPage, int totalItemCount, View view);
 
 }

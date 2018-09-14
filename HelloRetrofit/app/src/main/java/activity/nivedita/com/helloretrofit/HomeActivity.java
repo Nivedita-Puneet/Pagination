@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import activity.nivedita.com.helloretrofit.presenter.MoviesBasePresenter;
 import activity.nivedita.com.helloretrofit.presenter.MoviesPresenter;
 import activity.nivedita.com.helloretrofit.view.MainMVPView;
 
@@ -23,14 +24,16 @@ import activity.nivedita.com.networkutils.ConstantsUtil;
 import activity.nivedita.com.networkutils.LogNetworkError;
 
 
+import activity.nivedita.com.networkutils.paginate.Paginateutil;
+import dagger.Provides;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.processors.PublishProcessor;
 
 
-public class HomeActivity extends BaseActivity implements MainMVPView {
+public class HomeActivity extends BaseActivity implements MovieView {
 
     @Inject
-    MoviesPresenter mMoviesPresenter;
+    MoviesBasePresenter<MovieView> moviesBasePresenter;
 
     @Inject
     MovieAdapter movieAdapter;
@@ -38,6 +41,11 @@ public class HomeActivity extends BaseActivity implements MainMVPView {
     /*Initialize views*/
     RecyclerView recyclerView;
     ProgressBar progressBar;
+
+    private int lastVisibleItem, totalItemCount;
+
+
+    @Inject
     LinearLayoutManager linearLayoutManager;
 
     /*Classes used to add pagination */
@@ -58,47 +66,40 @@ public class HomeActivity extends BaseActivity implements MainMVPView {
         recyclerView = (RecyclerView) findViewById(R.id.main_recycler);
         progressBar = (ProgressBar) findViewById(R.id.main_progress);
 
-        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        moviesBasePresenter.attachView(HomeActivity.this);
         recyclerView.setLayoutManager(linearLayoutManager);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         recyclerView.setAdapter(movieAdapter);
-        mMoviesPresenter.attachView(this);
 
-        recyclerView.addOnScrollListener(new MoviePagination(linearLayoutManager) {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onLoadMore(int currentPage, int totalItemCount, View view) {
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
 
-                if (!mMoviesPresenter.proceedPagination()) {
+                 totalItemCount = linearLayoutManager.getItemCount();
+                lastVisibleItem = linearLayoutManager
+                        .findLastVisibleItemPosition();
 
-                    mMoviesPresenter.getPagination().onNext(movieAdapter.getLastVisibleItemId());
-                }
 
             }
         });
 
-        mMoviesPresenter.loadMovies();
+
     }
 
 
     @Override
-    public void showMovies(List<Result> movies) {
-
-        movieAdapter.addAll(movies);
-        movieAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void showMoviesEmpty() {
-
-        Toast.makeText(HomeActivity.this, "Movies you are looking for are not available", Toast.LENGTH_LONG).show();
+    public void onStart() {
+        super.onStart();
+        moviesBasePresenter.onViewInitialized();
     }
 
     @Override
     public void showError(LogNetworkError logNetworkError) {
 
-        Toast.makeText(HomeActivity.this, logNetworkError.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        Toast.makeText(HomeActivity.this, logNetworkError.getAppErrorMessage(), Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -113,10 +114,23 @@ public class HomeActivity extends BaseActivity implements MainMVPView {
         progressBar.setVisibility(View.INVISIBLE);
     }
 
+    @Override
+    public void getMoviesListSuccess(TopRatedMovies response) {
+
+        movieAdapter.addAll(response.getResults());
+        movieAdapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public void noMoviesToDisplay() {
+
+    }
+
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mMoviesPresenter.detachView();
+        moviesBasePresenter.detachView();
     }
 }

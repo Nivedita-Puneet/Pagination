@@ -23,8 +23,8 @@ public interface MovieService {
     /*Interface used to define the end points.*/
     @GET("top_rated")
     Flowable<TopRatedMovies> getTopRatedMovies(@Query("api_key") String apiKey,
-                                                 @Query("language") String language,
-                                                 @Query("page") int pageIndex);
+                                               @Query("language") String language,
+                                               @Query("page") int pageIndex);
 
     /*Helper class to create a service*/
 
@@ -33,7 +33,8 @@ public interface MovieService {
 
             Retrofit retrofit = new Retrofit.Builder().client(buildClient())
                     .addConverterFactory(GsonConverterFactory.create())
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create()).baseUrl(ConstantsUtil.BASE_URL).build();
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .baseUrl(ConstantsUtil.BASE_URL).build();
 
             return retrofit.create(MovieService.class);
 
@@ -42,8 +43,10 @@ public interface MovieService {
         private static OkHttpClient buildClient() {
             return new OkHttpClient
                     .Builder()
-                    .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                    .build();
+                    .addInterceptor(new HttpLoggingInterceptor()
+                            .setLevel(HttpLoggingInterceptor.Level.BODY)).build();
         }
     }
+
+
 }

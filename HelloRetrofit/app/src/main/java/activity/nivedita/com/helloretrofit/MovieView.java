@@ -1,5 +1,6 @@
 package activity.nivedita.com.helloretrofit;
 
+import activity.nivedita.com.helloretrofit.view.MVPView;
 import activity.nivedita.com.model.TopRatedMovies;
 
 /**
@@ -7,14 +8,9 @@ import activity.nivedita.com.model.TopRatedMovies;
  */
 
 /*A basic contract interface which will be defined in the MVP pattern to decouple the architecture.*/
-public interface MovieView {
-
-    void showWait();
-
-    void removeWait();
-
-    void onFailure(String appErrorMessage);
+public interface MovieView extends MVPView {
 
     void getMoviesListSuccess(TopRatedMovies response);
+    void noMoviesToDisplay();
 
 }
