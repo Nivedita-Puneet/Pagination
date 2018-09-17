@@ -28,8 +28,8 @@ public class AppDataManager implements DataManager {
     }
 
     @Override
-    public Flowable<TopRatedMovies> getTopRatedMovies() {
-        return apiHelper.getTopRatedMovies();
+    public Flowable<TopRatedMovies> getTopRatedMovies(int currentPage) {
+        return apiHelper.getTopRatedMovies(currentPage);
     }
 
     @Override

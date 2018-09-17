@@ -48,6 +48,9 @@ public class HomeActivity extends BaseActivity implements MovieView {
     @Inject
     LinearLayoutManager linearLayoutManager;
 
+    private final int VISIBLE_THRESHOLD = 1;
+
+
     /*Classes used to add pagination */
 
     private static String TAG = HomeActivity.class.getSimpleName();
@@ -81,6 +84,17 @@ public class HomeActivity extends BaseActivity implements MovieView {
                  totalItemCount = linearLayoutManager.getItemCount();
                 lastVisibleItem = linearLayoutManager
                         .findLastVisibleItemPosition();
+                if(!moviesBasePresenter.getLoading() &&
+                        (totalItemCount <= (lastVisibleItem+VISIBLE_THRESHOLD))){
+
+                    int pageIndex =moviesBasePresenter.getCurrentPage();
+                    pageIndex++;
+                    moviesBasePresenter.setCurrentPage(pageIndex);
+
+                    moviesBasePresenter.getPublishProcessor().onNext(pageIndex);
+                    //movieAdapter.addLoadingFooter();
+                    moviesBasePresenter.setLoading(true);
+                }
 
 
             }

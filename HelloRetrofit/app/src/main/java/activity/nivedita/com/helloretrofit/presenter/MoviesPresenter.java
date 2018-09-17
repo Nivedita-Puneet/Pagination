@@ -41,40 +41,55 @@ public class MoviesPresenter<V extends MovieView> extends BasePresenter<V>
         implements MoviesBasePresenter<V> {
 
     private static final String TAG = MoviesPresenter.class.getSimpleName();
-    public static Paginateutil paginateutil;
+
     private int currentPage;
     private boolean loading;
+    private DataManager mDataManager;
+    private SchedulerProvider schedulerProvider;
+
+    private PublishProcessor<Integer> publishProcessor;
+    private CompositeDisposable compositeDisposable;
 
     @Inject
     public MoviesPresenter(DataManager mDataManager,
                            SchedulerProvider schedulerProvider,
                            CompositeDisposable compositeDisposable,
-                           PublishProcessor<Integer> publishProcessor) {
+                           PublishProcessor<Integer> publishProcessor,
+                           int currentPage,
+                           boolean loading) {
 
-        super(mDataManager, schedulerProvider, compositeDisposable, publishProcessor);
+        this.mDataManager = mDataManager;
+        this.schedulerProvider = schedulerProvider;
+        this.compositeDisposable = compositeDisposable;
+        this.publishProcessor = publishProcessor;
+        this.schedulerProvider = schedulerProvider;
+        this.currentPage = currentPage;
+        this.loading = loading;
 
     }
-
 
     private Disposable getPopularMovies() {
 
 
         getMvpView().showWait();
-        return getPublishProcessor().onBackpressureDrop()
+        return publishProcessor.onBackpressureDrop()
                 .doOnNext(new Consumer<Integer>() {
                     @Override
                     public void accept(Integer integer) throws Exception {
+                        MoviesPresenter.this.loading = true;
                         getMvpView().showWait();
                     }
                 }).concatMap(new Function<Integer, Publisher<TopRatedMovies>>() {
                     @Override
                     public Publisher<TopRatedMovies> apply(Integer integer) throws Exception {
-                        return getDataManager().getTopRatedMovies()
-                                .subscribeOn(getSchedulerProvider().io()).observeOn(getSchedulerProvider().ui());
+                        return mDataManager.getTopRatedMovies(currentPage)
+                                .subscribeOn(schedulerProvider.io())
+                                .observeOn(schedulerProvider.ui());
                     }
                 }).subscribe(new Consumer<TopRatedMovies>() {
                     @Override
                     public void accept(TopRatedMovies topRatedMovies) throws Exception {
+                        MoviesPresenter.this.loading = false;
                         getMvpView().removeWait();
                         getMvpView().getMoviesListSuccess(topRatedMovies);
                     }
@@ -91,9 +106,34 @@ public class MoviesPresenter<V extends MovieView> extends BasePresenter<V>
     @Override
     public void onViewInitialized() {
 
-        getCompositeDisposable().add(getPopularMovies());
-        setCurrentPage(getCurrentPage());
-        getPublishProcessor().onNext(getCurrentPage());
+        compositeDisposable.add(getPopularMovies());
+        publishProcessor.onNext(currentPage);
     }
 
+    @Override
+    public void detachView() {
+        super.detachView();
+        compositeDisposable.clear();
+
+    }
+
+    public boolean getLoading() {
+        return MoviesPresenter.this.loading;
+    }
+
+    public int getCurrentPage() {
+        return MoviesPresenter.this.currentPage;
+    }
+
+    public PublishProcessor<Integer> getPublishProcessor() {
+        return MoviesPresenter.this.publishProcessor;
+    }
+
+    public void setLoading(boolean loading){
+        this.loading = loading;
+    }
+
+    public void setCurrentPage(int currentPage){
+       this.currentPage = currentPage;
+    }
 }

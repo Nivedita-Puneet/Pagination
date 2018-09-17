@@ -37,8 +37,9 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private boolean isLoadingAdded = false;
 
-    public MovieAdapter(Context context) {
+    public MovieAdapter(Context context, boolean isLoadingAdded) {
         this.context = context;
+        this.isLoadingAdded = isLoadingAdded;
         movieResults = new LinkedList<>();
 
 
@@ -206,7 +207,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public void addLoadingFooter() {
         isLoadingAdded = true;
-        add(new Result());
+       // add(new Result());
     }
 
     public void removeLoadingFooter() {

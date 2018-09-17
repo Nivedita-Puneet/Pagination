@@ -23,9 +23,9 @@ public class MovieAPIHelper implements APIHelper {
 
 
     @Override
-    public Flowable<TopRatedMovies> getTopRatedMovies() {
+    public Flowable<TopRatedMovies> getTopRatedMovies(int currentPage) {
         return movieService.getTopRatedMovies(ConstantsUtil.TMDB_API_KEY,
                 "en_US",
-                ConstantsUtil.TOTAL_PAGES);
+                currentPage);
     }
 }

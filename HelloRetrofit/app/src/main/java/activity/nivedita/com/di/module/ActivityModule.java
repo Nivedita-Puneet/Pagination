@@ -25,12 +25,12 @@ import io.reactivex.processors.PublishProcessor;
 public class ActivityModule {
 
     private Activity mActivity;
-    private boolean isRequestOnWay;
+    private int currentPage = 1;
+    private boolean loading = false;
 
-    public ActivityModule(Activity activity, boolean isRequestOnWay) {
+    public ActivityModule(Activity activity) {
 
         this.mActivity = activity;
-        this.isRequestOnWay = isRequestOnWay;
     }
 
     @Provides
@@ -46,12 +46,7 @@ public class ActivityModule {
 
     @Provides
     MovieAdapter provideMoviesAdapter() {
-        return new MovieAdapter(mActivity);
-    }
-
-    @Provides
-    boolean isRequestOnWay() {
-        return isRequestOnWay;
+        return new MovieAdapter(mActivity, getLoading());
     }
 
     @Provides
@@ -61,12 +56,12 @@ public class ActivityModule {
 
     @Provides
     int getCurrentPage() {
-        return 1;
+        return currentPage;
     }
 
     @Provides
     boolean getLoading() {
-        return false;
+        return loading;
     }
 
     @Provides

@@ -36,7 +36,7 @@ public class BaseActivity extends AppCompatActivity {
 
     public ActivityComponent getActivityComponent() {
         if (mActivityComponent == null) {
-            mActivityComponent = DaggerActivityComponent.builder().activityModule(new ActivityModule(this, requestOnWay))
+            mActivityComponent = DaggerActivityComponent.builder().activityModule(new ActivityModule(this))
                     .applicationComponent(HelloRetrofitApplication.get(this).getComponent()).build();
         }
         return mActivityComponent;

@@ -16,23 +16,6 @@ public class BasePresenter<V extends MVPView> implements Presenter<V> {
 
     private V mMvpView;
 
-    private final DataManager mDataManager;
-    private final SchedulerProvider mSchedulerProvider;
-    private final CompositeDisposable mCompositeDisposable;
-    private final PublishProcessor<Integer> publishProcessor;
-
-    @Inject
-    public BasePresenter(DataManager dataManager,
-                         SchedulerProvider schedulerProvider,
-                         CompositeDisposable compositeDisposable,
-                         PublishProcessor publishProcessor) {
-        this.mDataManager = dataManager;
-        this.mSchedulerProvider = schedulerProvider;
-        this.mCompositeDisposable = compositeDisposable;
-        this.publishProcessor = publishProcessor;
-    }
-
-
     @Override
     public void attachView(V mvpView) {
         this.mMvpView = mvpView;
@@ -40,8 +23,6 @@ public class BasePresenter<V extends MVPView> implements Presenter<V> {
 
     @Override
     public void detachView() {
-
-        mCompositeDisposable.dispose();
         mMvpView = null;
     }
 
@@ -62,23 +43,6 @@ public class BasePresenter<V extends MVPView> implements Presenter<V> {
             super("Please call Presenter.attachView(MvpView) before" +
                     " requesting data to the Presenter");
         }
-
-    }
-
-    public DataManager getDataManager() {
-        return mDataManager;
-    }
-
-    public SchedulerProvider getSchedulerProvider() {
-        return mSchedulerProvider;
-    }
-
-    public CompositeDisposable getCompositeDisposable() {
-        return mCompositeDisposable;
-    }
-
-    public PublishProcessor<Integer> getPublishProcessor() {
-        return publishProcessor;
     }
 
 }

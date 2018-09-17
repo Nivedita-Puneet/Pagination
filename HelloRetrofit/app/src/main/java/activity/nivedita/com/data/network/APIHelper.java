@@ -9,6 +9,6 @@ import io.reactivex.Flowable;
 
 public interface APIHelper {
 
-    Flowable<TopRatedMovies> getTopRatedMovies();
+    Flowable<TopRatedMovies> getTopRatedMovies(int currentPage);
 
 }
