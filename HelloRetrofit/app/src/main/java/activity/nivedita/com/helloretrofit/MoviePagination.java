@@ -14,19 +14,10 @@ import activity.nivedita.com.networkutils.paginate.Paginateutil;
  * Created by PUNEETU on 24-02-2018.
  */
 
- public class MoviePagination extends RecyclerView.OnScrollListener {
+public abstract class MoviePagination extends RecyclerView.OnScrollListener {
 
-     @Inject
-    Paginateutil paginateutil;
     /*Handle on scroll items to load more items into recyclerview*/
     private LinearLayoutManager linearLayoutManager;
-
-    private int visibleThreshold = 5;
-    private int currentPage;
-
-    private boolean loading = true;
-    private int previousTotalItemCount = 0;
-    private int startingPageIndex = 1;
 
     public MoviePagination(RecyclerView.LayoutManager layoutManager) {
 
@@ -38,10 +29,26 @@ import activity.nivedita.com.networkutils.paginate.Paginateutil;
 
         super.onScrolled(recyclerView, dx, dy);
 
-        int lastVisibleItemPosition = linearLayoutManager.findLastVisibleItemPosition();
+        int visibleItemCount = linearLayoutManager.getChildCount();
         int totalItemCount = linearLayoutManager.getItemCount();
+        int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
+
+        if (!isLoading() && !isLastPage()) {
+            if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                    && firstVisibleItemPosition >= 0) {
+                loadMoreItems();
+            }
+        }
 
     }
+
+    protected abstract void loadMoreItems();
+
+    public abstract int getTotalPageCount();
+
+    public abstract boolean isLastPage();
+
+    public abstract boolean isLoading();
 
 
 }

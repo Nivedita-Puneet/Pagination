@@ -125,19 +125,31 @@ public class HomeActivity extends BaseActivity implements MovieView {
     @Override
     public void removeWait() {
 
-        progressBar.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void getMoviesListSuccess(TopRatedMovies response) {
 
         movieAdapter.addAll(response.getResults());
-        movieAdapter.notifyDataSetChanged();
+       // movieAdapter.notifyDataSetChanged();
 
     }
 
     @Override
     public void noMoviesToDisplay() {
+
+    }
+
+    @Override
+    public void addLoadingFooter(TopRatedMovies response) {
+
+        movieAdapter.setLoadingAdded(true);
+        movieAdapter.addLoadingFooter(response.getResults().get(moviesBasePresenter.getCurrentPage()));
+    }
+
+    @Override
+    public void removeLoadingFooter(TopRatedMovies response) {
 
     }
 

@@ -24,7 +24,7 @@ import activity.nivedita.com.model.Result;
 import activity.nivedita.com.networkutils.ConstantsUtil;
 
 /**
- * Created by NEETU on 22-02-2018.
+ * Created by
  */
 
 public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -38,6 +38,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private boolean isLoadingAdded = false;
 
     public MovieAdapter(Context context, boolean isLoadingAdded) {
+
         this.context = context;
         this.isLoadingAdded = isLoadingAdded;
         movieResults = new LinkedList<>();
@@ -128,7 +129,8 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 break;
 
             case LOADING:
-//                Do nothing
+                LoadingVH loadingVH = (LoadingVH) holder;
+                loadingVH.mProgressBar.setVisibility(View.VISIBLE);
                 break;
         }
 
@@ -167,8 +169,12 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     protected class LoadingVH extends RecyclerView.ViewHolder {
 
+        private ProgressBar mProgressBar;
+
         public LoadingVH(View itemView) {
             super(itemView);
+            mProgressBar = (ProgressBar) itemView.findViewById(R.id.loadmore_progress);
+
         }
     }
 
@@ -205,13 +211,12 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
 
-    public void addLoadingFooter() {
-        isLoadingAdded = true;
-       // add(new Result());
+    public void addLoadingFooter(Result result) {
+        add(result);
     }
 
     public void removeLoadingFooter() {
-        isLoadingAdded = false;
+        this.isLoadingAdded = false;
 
         int position = movieResults.size() - 1;
         Result result = getItem(position);
@@ -226,5 +231,12 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return movieResults.get(position);
     }
 
+    public boolean isLoadingAdded() {
+        return isLoadingAdded;
+    }
+
+    public void setLoadingAdded(boolean loadingAdded) {
+        isLoadingAdded = loadingAdded;
+    }
 
 }

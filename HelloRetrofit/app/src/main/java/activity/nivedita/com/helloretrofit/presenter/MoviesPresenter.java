@@ -17,6 +17,7 @@ import activity.nivedita.com.helloretrofit.view.MainMVPView;
 import activity.nivedita.com.model.Pager;
 import activity.nivedita.com.model.Result;
 import activity.nivedita.com.model.TopRatedMovies;
+import activity.nivedita.com.networkutils.ConstantsUtil;
 import activity.nivedita.com.networkutils.LogNetworkError;
 import activity.nivedita.com.networkutils.paginate.Paginateutil;
 import activity.nivedita.com.networkutils.rx.SchedulerProvider;
@@ -76,12 +77,17 @@ public class MoviesPresenter<V extends MovieView> extends BasePresenter<V>
                 .doOnNext(new Consumer<Integer>() {
                     @Override
                     public void accept(Integer integer) throws Exception {
-                        MoviesPresenter.this.loading = true;
-                        getMvpView().showWait();
+
+
+
                     }
                 }).concatMap(new Function<Integer, Publisher<TopRatedMovies>>() {
                     @Override
-                    public Publisher<TopRatedMovies> apply(Integer integer) throws Exception {
+                    public Publisher<TopRatedMovies> apply(Integer integer)
+                            throws Exception {
+
+                        MoviesPresenter.this.loading = true;
+                        getMvpView().showWait();
                         return mDataManager.getTopRatedMovies(currentPage)
                                 .subscribeOn(schedulerProvider.io())
                                 .observeOn(schedulerProvider.ui());
@@ -89,9 +95,14 @@ public class MoviesPresenter<V extends MovieView> extends BasePresenter<V>
                 }).subscribe(new Consumer<TopRatedMovies>() {
                     @Override
                     public void accept(TopRatedMovies topRatedMovies) throws Exception {
+
                         MoviesPresenter.this.loading = false;
                         getMvpView().removeWait();
                         getMvpView().getMoviesListSuccess(topRatedMovies);
+
+                        if(currentPage <= ConstantsUtil.TOTAL_PAGES){
+                            getMvpView().addLoadingFooter(topRatedMovies);
+                        }
                     }
                 }, new Consumer<Throwable>() {
                     @Override

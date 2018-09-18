@@ -10,7 +10,6 @@
         android:id="@+id/main_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
         android:paddingBottom="@dimen/activity_margin_content"
         android:paddingTop="@dimen/activity_margin_content"/>
 
@@ -20,6 +19,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:indeterminate="true"
-        android:visibility="invisible"/>
+        />
 
 </FrameLayout>
