@@ -14,5 +14,6 @@ public interface MovieView extends MVPView {
     void noMoviesToDisplay();
     void addLoadingFooter(TopRatedMovies response);
     void removeLoadingFooter(TopRatedMovies response);
+    void goBack();
 
 }

@@ -155,6 +155,11 @@ public class HomeActivity extends BaseActivity implements MovieView {
 
     }
 
+    @Override
+    public void goBack() {
+
+    }
+
 
     @Override
     public void onDestroy() {

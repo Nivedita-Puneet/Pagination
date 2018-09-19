@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 
+import activity.nivedita.com.base.BaseFragment;
 import activity.nivedita.com.base.HelloRetrofitApplication;
 import activity.nivedita.com.di.component.ActivityComponent;
 import activity.nivedita.com.di.component.DaggerActivityComponent;
@@ -13,7 +14,7 @@ import activity.nivedita.com.di.module.ActivityModule;
  * Created by NEETU on 09-03-2018.
  */
 
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends AppCompatActivity implements BaseFragment.Callback {
 
     private ActivityComponent mActivityComponent;
     boolean requestOnWay = false;
@@ -42,4 +43,13 @@ public class BaseActivity extends AppCompatActivity {
         return mActivityComponent;
     }
 
+    @Override
+    public void onFragmentAttached() {
+
+    }
+
+    @Override
+    public void onFragmentDetached(String tag) {
+
+    }
 }
