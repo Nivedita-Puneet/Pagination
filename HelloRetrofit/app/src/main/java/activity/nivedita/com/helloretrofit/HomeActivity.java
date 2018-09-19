@@ -120,12 +120,14 @@ public class HomeActivity extends BaseActivity implements MovieView {
     public void showWait() {
 
         progressBar.setVisibility(View.VISIBLE);
+       // recyclerView.setVisibility(View.GONE);
     }
 
     @Override
     public void removeWait() {
 
         progressBar.setVisibility(View.GONE);
+       // recyclerView.setVisibility(View.VISIBLE);
     }
 
     @Override
