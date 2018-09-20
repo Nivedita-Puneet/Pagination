@@ -75,11 +75,6 @@ public class ActivityModule {
     }
 
     @Provides
-    SchedulerProvider provideSchedulerProvider() {
-        return new AppSchedulerprovider();
-    }
-
-    @Provides
     @PerActivity
     MoviesBasePresenter<MovieView> provideSunshinePresenter(MoviesPresenter<MovieView> moviesPresenter) {
         return moviesPresenter;

@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 
 import activity.nivedita.com.base.HelloRetrofitApplication;
 import activity.nivedita.com.data.DataManager;
+import activity.nivedita.com.di.builder.ActivityBuilder;
 import activity.nivedita.com.di.module.ApplicationModule;
 import activity.nivedita.com.di.module.NetworkModule;
 import activity.nivedita.com.di.scope.ApplicationContext;
@@ -19,15 +20,11 @@ import dagger.android.AndroidInjectionModule;
  */
 
 @Singleton
-@Component(modules = {AndroidInjectionModule.class, ApplicationModule.class, NetworkModule.class})
+@Component(modules = {AndroidInjectionModule.class,
+        ApplicationModule.class, ActivityBuilder.class,NetworkModule.class})
 public interface ApplicationComponent {
 
     void inject(HelloRetrofitApplication application);
-
-    @ApplicationContext
-    Context context();
-
-    DataManager dataManager();
 
     @Component.Builder
     interface Builder {
@@ -37,4 +34,6 @@ public interface ApplicationComponent {
 
         ApplicationComponent build();
     }
+
+
 }

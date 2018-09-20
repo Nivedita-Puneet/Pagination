@@ -1,5 +1,6 @@
 package activity.nivedita.com.helloretrofit;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import activity.nivedita.com.base.BaseFragment;
 import activity.nivedita.com.model.TopRatedMovies;
 import activity.nivedita.com.networkutils.LogNetworkError;
+import dagger.android.support.AndroidSupportInjection;
 
 /**
  * Fragment to be attached in the first tab
@@ -24,6 +26,12 @@ public class MoviesFragment extends BaseFragment implements MovieView {
         MoviesFragment moviesFragment = new MoviesFragment();
         moviesFragment.setArguments(args);
         return moviesFragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        AndroidSupportInjection.inject(MoviesFragment.this);
     }
 
     @Override

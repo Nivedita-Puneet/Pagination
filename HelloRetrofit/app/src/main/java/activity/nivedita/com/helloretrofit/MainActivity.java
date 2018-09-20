@@ -7,10 +7,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import activity.nivedita.com.helloretrofit.presenter.MainActivityBasePresenter;
 import activity.nivedita.com.helloretrofit.view.MainMVPView;
+import activity.nivedita.com.model.Result;
+import activity.nivedita.com.networkutils.LogNetworkError;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
@@ -20,7 +24,8 @@ import dagger.android.support.HasSupportFragmentInjector;
  * Main Activity with the View pager.
  */
 
-public class MainActivity extends BaseActivity implements HasSupportFragmentInjector {
+public class MainActivity extends BaseActivity implements
+        HasSupportFragmentInjector, MainMVPView {
 
     Toolbar toolbar;
     ViewPager viewPager;
@@ -59,6 +64,9 @@ public class MainActivity extends BaseActivity implements HasSupportFragmentInje
 
         tabLayout = (TabLayout) findViewById(R.id.tabanim_tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        setViewPagerAdapter();
+        mainActivityPresenter.attachView(MainActivity.this);
     }
 
     @Override
@@ -90,5 +98,30 @@ public class MainActivity extends BaseActivity implements HasSupportFragmentInje
 
             }
         });
+    }
+
+    @Override
+    public void showMovies(List<Result> movies) {
+
+    }
+
+    @Override
+    public void showMoviesEmpty() {
+
+    }
+
+    @Override
+    public void showError(LogNetworkError logNetworkError) {
+
+    }
+
+    @Override
+    public void showWait() {
+
+    }
+
+    @Override
+    public void removeWait() {
+
     }
 }

@@ -9,10 +9,12 @@ import activity.nivedita.com.di.scope.ApplicationContext;
 import activity.nivedita.com.di.scope.PerActivity;
 import activity.nivedita.com.helloretrofit.MovieAdapter;
 import activity.nivedita.com.helloretrofit.MovieView;
+import activity.nivedita.com.helloretrofit.MoviesFragment;
 import activity.nivedita.com.helloretrofit.presenter.MoviesBasePresenter;
 import activity.nivedita.com.helloretrofit.presenter.MoviesPresenter;
 import activity.nivedita.com.networkutils.rx.AppSchedulerprovider;
 import activity.nivedita.com.networkutils.rx.SchedulerProvider;
+import dagger.Module;
 import dagger.Provides;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.processors.PublishProcessor;
@@ -20,24 +22,11 @@ import io.reactivex.processors.PublishProcessor;
 /**
  * Fragment module to be defined and injected into Fragment provider for movie
  */
-
+@Module
 public class MoviesFragmentModule {
 
-    private Context context;
-    private Activity mActivity;
     private int currentPage = 1;
     private boolean loading = false;
-
-
-    public MoviesFragmentModule(@ActivityContext Context context){
-        this.context = context;
-    }
-
-    @Provides
-    @ActivityContext
-    Context provideActivity() {
-        return context;
-    }
 
     @Provides
     PublishProcessor<Integer> publishProcessor() {
@@ -55,13 +44,13 @@ public class MoviesFragmentModule {
     }
 
     @Provides
-    MovieAdapter provideMoviesAdapter() {
-        return new MovieAdapter(provideActivity(), getLoading());
+    MovieAdapter provideMoviesAdapter(MoviesFragment moviesFragment) {
+        return new MovieAdapter(moviesFragment.getActivity(), getLoading());
     }
 
     @Provides
-    LinearLayoutManager linearLayoutManager() {
-        return new LinearLayoutManager(MoviesFragmentModule.this.provideActivity(),
+    LinearLayoutManager linearLayoutManager(MoviesFragment moviesFragment) {
+        return new LinearLayoutManager(moviesFragment.getActivity(),
                 LinearLayoutManager.VERTICAL, false);
     }
 

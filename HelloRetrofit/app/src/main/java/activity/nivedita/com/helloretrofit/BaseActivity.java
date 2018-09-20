@@ -5,10 +5,7 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 
 import activity.nivedita.com.base.BaseFragment;
-import activity.nivedita.com.base.HelloRetrofitApplication;
-import activity.nivedita.com.di.component.ActivityComponent;
-import activity.nivedita.com.di.component.DaggerActivityComponent;
-import activity.nivedita.com.di.module.ActivityModule;
+import dagger.android.AndroidInjection;
 
 /**
  * Created by NEETU on 09-03-2018.
@@ -19,7 +16,7 @@ public class BaseActivity extends AppCompatActivity implements BaseFragment.Call
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        performDependencyInjection();
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectAll()
@@ -32,13 +29,10 @@ public class BaseActivity extends AppCompatActivity implements BaseFragment.Call
         }
     }
 
-    /*public ActivityComponent getActivityComponent() {
-        if (mActivityComponent == null) {
-            mActivityComponent = DaggerActivityComponent.builder().activityModule(new ActivityModule(this))
-                    .applicationComponent(HelloRetrofitApplication.get(this).getComponent()).build();
-        }
-        return mActivityComponent;
-    }*/
+    public void performDependencyInjection(){
+        AndroidInjection.inject(BaseActivity.this);
+    }
+
 
     @Override
     public void onFragmentAttached() {

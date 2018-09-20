@@ -21,21 +21,10 @@ import dagger.Provides;
 @Module
 public class MainActivityModule {
 
-    private Activity mActivity;
-
-    public MainActivityModule(Activity activity) {
-        this.mActivity = activity;
-    }
-
-    @Provides
-    Activity provideActivity() {
-        return mActivity;
-    }
-
     @Provides
     @ActivityContext
-    Context provideContext() {
-        return mActivity;
+    Context provideContext(MainActivity mainActivity) {
+        return mainActivity;
     }
 
     @Provides
@@ -45,12 +34,7 @@ public class MainActivityModule {
     }
 
     @Provides
-    SchedulerProvider provideSchedulerProvider() {
-        return new AppSchedulerprovider();
-    }
-
-    @Provides
-    MainActivityBasePresenter<MainMVPView> providePresenter(MainActivityPresenter mainActivityPresenter) {
+    MainActivityBasePresenter<MainMVPView> providePresenter(MainActivityPresenter<MainMVPView> mainActivityPresenter) {
         return mainActivityPresenter;
     }
 
