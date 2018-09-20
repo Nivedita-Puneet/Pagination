@@ -1,5 +1,7 @@
 package activity.nivedita.com.di.module;
 
+import android.app.Activity;
+
 import activity.nivedita.com.helloretrofit.MainActivity;
 import activity.nivedita.com.helloretrofit.MoviePagerAdapter;
 import activity.nivedita.com.helloretrofit.presenter.MainActivityBasePresenter;
@@ -16,6 +18,9 @@ import dagger.Provides;
 
 @Module
 public class MainActivityModule {
+
+    private Activity mActivity;
+
 
     @Provides
     MoviePagerAdapter provideMoviePagerAdapter(MainActivity mainActivity) {

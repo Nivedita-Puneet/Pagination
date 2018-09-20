@@ -1,5 +1,7 @@
 package activity.nivedita.com.di.module;
 
+import activity.nivedita.com.di.scope.ApplicationContext;
+import activity.nivedita.com.helloretrofit.MovieAdapter;
 import activity.nivedita.com.networkutils.rx.AppSchedulerprovider;
 import activity.nivedita.com.networkutils.rx.SchedulerProvider;
 import dagger.Provides;
@@ -26,5 +28,7 @@ public class MoviesFragmentModule {
     SchedulerProvider provideSchedulerProvider() {
         return new AppSchedulerprovider();
     }
+    
+
 
 }
