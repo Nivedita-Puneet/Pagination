@@ -60,7 +60,7 @@ public class HomeActivity extends BaseActivity implements MovieView {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        getActivityComponent().inject(HomeActivity.this);
+        //getActivityComponent().inject(HomeActivity.this);
         initializeControls();
     }
 

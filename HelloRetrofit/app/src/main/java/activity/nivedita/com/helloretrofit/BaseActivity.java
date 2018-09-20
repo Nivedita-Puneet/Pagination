@@ -16,9 +16,6 @@ import activity.nivedita.com.di.module.ActivityModule;
 
 public class BaseActivity extends AppCompatActivity implements BaseFragment.Callback {
 
-    private ActivityComponent mActivityComponent;
-    boolean requestOnWay = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,13 +32,13 @@ public class BaseActivity extends AppCompatActivity implements BaseFragment.Call
         }
     }
 
-    public ActivityComponent getActivityComponent() {
+    /*public ActivityComponent getActivityComponent() {
         if (mActivityComponent == null) {
             mActivityComponent = DaggerActivityComponent.builder().activityModule(new ActivityModule(this))
                     .applicationComponent(HelloRetrofitApplication.get(this).getComponent()).build();
         }
         return mActivityComponent;
-    }
+    }*/
 
     @Override
     public void onFragmentAttached() {

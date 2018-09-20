@@ -1,7 +1,9 @@
 package activity.nivedita.com.di.module;
 
 import android.app.Activity;
+import android.content.Context;
 
+import activity.nivedita.com.di.scope.ActivityContext;
 import activity.nivedita.com.helloretrofit.MainActivity;
 import activity.nivedita.com.helloretrofit.MoviePagerAdapter;
 import activity.nivedita.com.helloretrofit.presenter.MainActivityBasePresenter;
@@ -21,6 +23,20 @@ public class MainActivityModule {
 
     private Activity mActivity;
 
+    public MainActivityModule(Activity activity) {
+        this.mActivity = activity;
+    }
+
+    @Provides
+    Activity provideActivity() {
+        return mActivity;
+    }
+
+    @Provides
+    @ActivityContext
+    Context provideContext() {
+        return mActivity;
+    }
 
     @Provides
     MoviePagerAdapter provideMoviePagerAdapter(MainActivity mainActivity) {
