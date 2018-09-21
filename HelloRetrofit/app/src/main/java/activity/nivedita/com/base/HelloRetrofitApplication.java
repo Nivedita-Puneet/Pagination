@@ -29,7 +29,7 @@ public class HelloRetrofitApplication extends Application implements HasActivity
     @Override
     public void onCreate() {
         super.onCreate();
-        DaggerApplicationComponent.builder().build().inject(HelloRetrofitApplication.this);
+        DaggerApplicationComponent.builder().application(this).build().inject(HelloRetrofitApplication.this);
     }
 
     public static HelloRetrofitApplication get(Context context) {

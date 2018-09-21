@@ -50,13 +50,13 @@ public class MainActivity extends BaseActivity implements
 
     private void initializeControls() {
 
-        toolbar = (Toolbar) findViewById(R.id.tabanim_tabs);
+        toolbar = (Toolbar) findViewById(R.id.tabanim_toolbar);
         setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null){
+        /*if(getSupportActionBar() != null){
 
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
+        }*/
 
 
         viewPager = (ViewPager) findViewById(R.id.tabanim_viewpager);

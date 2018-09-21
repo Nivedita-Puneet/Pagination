@@ -39,11 +39,6 @@ public class MoviesFragmentModule {
     }
 
     @Provides
-    SchedulerProvider provideSchedulerProvider() {
-        return new AppSchedulerprovider();
-    }
-
-    @Provides
     MovieAdapter provideMoviesAdapter(MoviesFragment moviesFragment) {
         return new MovieAdapter(moviesFragment.getActivity(), getLoading());
     }
@@ -65,7 +60,6 @@ public class MoviesFragmentModule {
     }
 
     @Provides
-    @PerActivity
     MoviesBasePresenter<MovieView> provideSunshinePresenter(MoviesPresenter<MovieView> moviesPresenter) {
         return moviesPresenter;
     }

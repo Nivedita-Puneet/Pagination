@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import javax.inject.Inject;
 
@@ -113,21 +114,25 @@ public class MoviesFragment extends BaseFragment implements MovieView {
     @Override
     public void showError(LogNetworkError logNetworkError) {
 
+        Toast.makeText(getActivity(), logNetworkError.getAppErrorMessage(), Toast.LENGTH_LONG).show();
+
     }
 
     @Override
     public void showWait() {
 
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void removeWait() {
-
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void getMoviesListSuccess(TopRatedMovies response) {
 
+        movieAdapter.addAll(response.getResults());
     }
 
     @Override
@@ -148,6 +153,11 @@ public class MoviesFragment extends BaseFragment implements MovieView {
     @Override
     public void goBack() {
 
+    }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        moviesPresenter.detachView();
     }
 }

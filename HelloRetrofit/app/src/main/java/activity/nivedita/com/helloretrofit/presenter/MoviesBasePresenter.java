@@ -10,7 +10,6 @@ import io.reactivex.processors.PublishProcessor;
  * The base presenter class for movies.
  */
 
-@PerActivity
 public interface MoviesBasePresenter<V extends MovieView> extends Presenter<V> {
 
     void onViewInitialized();
