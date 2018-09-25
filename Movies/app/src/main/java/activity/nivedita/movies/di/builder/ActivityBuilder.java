@@ -3,6 +3,7 @@ package activity.nivedita.movies.di.builder;
 import activity.nivedita.movies.di.module.MainActivityModule;
 import activity.nivedita.movies.di.module.MovieFragmentProvider;
 import activity.nivedita.movies.di.module.TvShowsModuleProvider;
+import activity.nivedita.movies.di.scope.PerActivity;
 import activity.nivedita.movies.movies.MainActivity;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -12,6 +13,7 @@ import dagger.android.ContributesAndroidInjector;
  */
 
 @Module
+@PerActivity
 public abstract class ActivityBuilder {
 
     @ContributesAndroidInjector(modules = {

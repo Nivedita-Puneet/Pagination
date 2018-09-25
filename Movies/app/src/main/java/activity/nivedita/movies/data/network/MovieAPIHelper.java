@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import activity.nivedita.movies.model.TopRatedMovies;
+import activity.nivedita.movies.model.tvshows.TvShows;
 import activity.nivedita.movies.networkutils.ConstantsUtil;
 import activity.nivedita.movies.networkutils.MovieService;
 import io.reactivex.Flowable;
@@ -25,6 +26,13 @@ public class MovieAPIHelper implements APIHelper {
     @Override
     public Flowable<TopRatedMovies> getTopRatedMovies(int currentPage) {
         return movieService.getTopRatedMovies(ConstantsUtil.TMDB_API_KEY,
+                "en_US",
+                currentPage);
+    }
+
+    @Override
+    public Flowable<TvShows> getPopularTVShows(int currentPage) {
+        return movieService.getPopularTVShows(ConstantsUtil.TMDB_API_KEY,
                 "en_US",
                 currentPage);
     }

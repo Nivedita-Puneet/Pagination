@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import activity.nivedita.movies.data.network.APIHelper;
 import activity.nivedita.movies.di.scope.ApplicationContext;
 import activity.nivedita.movies.model.TopRatedMovies;
+import activity.nivedita.movies.model.tvshows.TvShows;
 import io.reactivex.Flowable;
 
 /**
@@ -29,6 +30,11 @@ public class AppDataManager implements DataManager {
     @Override
     public Flowable<TopRatedMovies> getTopRatedMovies(int currentPage) {
         return apiHelper.getTopRatedMovies(currentPage);
+    }
+
+    @Override
+    public Flowable<TvShows> getPopularTVShows(int currentPage) {
+        return apiHelper.getPopularTVShows(currentPage);
     }
 
     @Override

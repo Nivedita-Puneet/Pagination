@@ -73,7 +73,7 @@ public class MainActivity extends BaseActivity implements
         viewPager.setAdapter(moviePagerAdapter);
 
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.popular_movie)));
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.tv_shows)));
+       // tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.tv_shows)));
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
