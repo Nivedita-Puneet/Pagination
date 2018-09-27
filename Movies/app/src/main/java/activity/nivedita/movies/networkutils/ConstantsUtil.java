@@ -16,6 +16,8 @@ public class ConstantsUtil {
 
     public static final int  TOTAL_PAGES = 5;
 
+    public static final String TV_SHOWS_POSTER_PATH = "https://image.tmdb.org/t/p/w500";
+
 
 
 }
