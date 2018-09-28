@@ -74,9 +74,9 @@ public class TvShowsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         .fitCenter()
                         .into(tvShowsVH.tvImageView);
                 tvShowsVH.tvShowTitle.setText(popularTvShows.getOriginalName());
-                tvShowsVH.ratingView.setText(popularTvShows.getVoteCount());
+                //tvShowsVH.ratingView
                 //TODO: Need to identify the genre ID and set it appropriately.
-                tvShowsVH.tvGenres.setText(popularTvShows.getGenreIds().get(0));
+                //tvShowsVH.tvGenres.setText(popularTvShows.getOriginCountry());
 
         }
     }

@@ -1,8 +1,10 @@
 package activity.nivedita.movies.di.module;
 
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 
 import activity.nivedita.movies.movies.TVShowsFragment;
+import activity.nivedita.movies.movies.TvShowsAdapter;
 import activity.nivedita.movies.movies.presenter.TVShowsPresenter;
 import activity.nivedita.movies.movies.presenter.TvShowsBasePresenter;
 import activity.nivedita.movies.movies.view.TVShowsView;
@@ -28,9 +30,13 @@ public class TvShowsModule {
     }
 
     @Provides
-    LinearLayoutManager linearLayoutManager(TVShowsFragment tvSHowsFragment) {
-        return new LinearLayoutManager(tvSHowsFragment.getActivity(),
-                LinearLayoutManager.VERTICAL, false);
+    GridLayoutManager provideGridLayoutManager(TVShowsFragment tvSHowsFragment) {
+        return new GridLayoutManager(tvSHowsFragment.getActivity(), 2);
+    }
+
+    @Provides
+    TvShowsAdapter provideTvShowsAdapter(TVShowsFragment tvShowsFragment) {
+        return new TvShowsAdapter(tvShowsFragment.getActivity());
     }
 
     @Provides

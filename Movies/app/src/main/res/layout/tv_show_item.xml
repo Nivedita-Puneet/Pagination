@@ -9,7 +9,6 @@
         android:id="@+id/tv_image_card"
         android:layout_width="match_parent"
         android:layout_height="240dp"
-        android:background="@color/divider"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?attr/selectableItemBackground">
@@ -19,6 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="240dp"
             android:scaleType="fitXY"
+            android:padding="10dp"
             tools:ignore="ContentDescription" />
 
         <android.support.v7.widget.AppCompatTextView
@@ -27,7 +27,7 @@
             android:layout_height="30dp"
             android:layout_gravity="bottom|end"
             android:layout_margin="8dp"
-            android:background="@drawable/orange_circle"
+            android:background="@drawable/blue_circle"
             android:gravity="center"
             android:text="7.8"
             android:textColor="@android:color/white"

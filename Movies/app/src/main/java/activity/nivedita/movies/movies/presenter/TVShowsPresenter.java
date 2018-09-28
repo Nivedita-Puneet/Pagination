@@ -50,6 +50,8 @@ public class TVShowsPresenter<V extends TVShowsView> extends BasePresenter<V>
                     public void accept(TvShows tvShows) throws Exception {
 
                         Log.i(TAG, "SERIALIZED RESPOSNSE IS" + tvShows.getResults().toString());
+                        getMvpView().displayPopularTvShows(tvShows.getResults());
+                        Log.i(TAG, "The poster path is" + tvShows.getResults().get(0).getPosterPath());
                     }
                 }, new Consumer<Throwable>() {
                     @Override
